@@ -1,8 +1,22 @@
 const chalk = require('chalk')
-const config = require('./config')
+const { program } = require('commander')
+const App = require('./app')
 
-console.log(chalk.yellow('Your github token is:'))
-console.info(chalk.yellow(config.GITHUB_PERSONAL_ACCESS_TOKEN))
+// parse command line options
+program
+    .requiredOption('--repo <id>', 'repository ID is required')
+    .option('--period <interval>', 'number of days followed by "d"')
+    .parse()
 
-// remove this line
-require('./example')
+const { repo: repoId, period: days } = program.opts()
+
+// initialize application
+const app = new App(repoId)
+try {
+    days && app.setPeriod(days)
+} catch (e) {
+    console.error(chalk.red(e.message))
+    process.exit(1)
+}
+
+console.log(app.repo, app.periodDays)
