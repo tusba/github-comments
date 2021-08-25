@@ -30,7 +30,12 @@ module.exports = class App {
         if (match === null) {
             throw new Error('Wrong format of period')
         }
+
         this.periodDays = parseInt(match[1])
+        if (!this.periodDays) {
+            throw new Error('Wrong value of period')
+        }
+
         return this
     }
 }

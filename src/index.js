@@ -19,4 +19,8 @@ try {
     process.exit(1)
 }
 
-console.log(app.repo, app.periodDays)
+// inform about user input before starting
+{
+    const strPeriod = app.periodDays ? ` for past ${app.periodDays} days` : ''
+    console.log(chalk.white(`\n  Fetching comments${strPeriod} for "${app.repo}"...`))
+}
