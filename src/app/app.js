@@ -24,8 +24,9 @@ module.exports = class App {
     /**
      * @param {String} value 
      * @returns this
+     * @throws
      */
-    setPeriod(value) {
+    set period(value) {
         const match = /^(\d+)d$/i.exec(value)
         if (match === null) {
             throw new Error('Wrong format of period')
