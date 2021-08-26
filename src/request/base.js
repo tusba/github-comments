@@ -64,6 +64,8 @@ module.exports = class CommentRequest {
             throw new Error('URL not set')
         }
 
-        yield this.client.get(this.url, this.queryParams)
+        yield this.client.get(this.url, {
+            params: this.queryParams
+        })
     }
 }
