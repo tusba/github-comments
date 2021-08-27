@@ -4,11 +4,17 @@
  */
 module.exports = class RepoComments extends require('./base') {
     /**
-     * @param {string} repo - Repository ID
+     * @inheritdoc
      */
     constructor(repo) {
-        super()
-        this.url = `/repos/${repo}/comments`
+        super(repo)
+    }
+
+    /**
+     * @inheritdoc
+     */
+    get url() {
+        return `/repos/${this.repo}/comments`
     }
 
     /**

@@ -5,12 +5,21 @@ const axios = require('axios')
  * @classdesc Base request for comments
  */
 module.exports = class CommentRequest {
-    constructor() {
-       /**
-        * Base URL
-        *
-        * @type String
-        */
+    /**
+     * @param {String} repo - Repository ID
+     */
+    constructor(repo) {
+        /**
+         * Repository ID
+         *
+         * @type String
+         */
+        this.repo = repo
+        /**
+         * Base URL
+         *
+         * @type String
+         */
         this.baseUrl = 'https://api.github.com'
         /**
          * HTTP headers
@@ -22,18 +31,22 @@ module.exports = class CommentRequest {
         }
         /**
          * Request parameters
+         *
+         * @type Object
          */
         this.queryParams = {}
 
         this.initClient()
+    }
 
-        /**
-         * Relative URL to make request to
-         * Should be explicitly set in any subclasses
-         *
-         * @type String
-         */
-         this.url = undefined
+    /**
+     * Relative URL to make request to
+     * Should be explicitly overridden in any subclasses
+     *
+     * @returns {String}
+     */
+    get url() {
+        throw new Error('Abstract getter')
     }
 
     /**
