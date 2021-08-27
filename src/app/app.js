@@ -22,6 +22,20 @@ module.exports = class App {
     }
 
     /**
+     * @return {Date}
+     */
+    get limitDate() {
+        if (!this.periodDays) {
+            return undefined
+        }
+
+        const d = new Date()
+        d.setDate(d.getDate() - this.periodDays)
+
+        return d
+    }
+
+    /**
      * @param {String} value 
      * @returns this
      * @throws
