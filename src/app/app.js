@@ -105,7 +105,7 @@ module.exports = class App {
 
                     return comment
                 },
-                filter: limitDate ? ({ created_at }) => created_at <= limitDate : undefined
+                filter: limitDate ? ({ created_at }) => created_at >= limitDate : undefined
             }
         ]
 
