@@ -1,7 +1,6 @@
 const chalk = require('chalk')
 const { program } = require('commander')
 const App = require('./app')
-const { Repo: RepoComments } = require('./request')
 
 // parse command line options
 program
@@ -26,27 +25,6 @@ try {
     console.log(chalk.white(`\n  Fetching comments${strPeriod} for "${app.repo}"...`))
 }
 
-/**
- * Date to limit results
- *
- * @type String
- */
-const limitDate = app.limitDate?.toISOString().replace(/\.\d{3}(?=Z$)/i, '')
-
 console.log()
 // make request to repo comments
-async function fetchRepoComments() {
-    const repoComments = new RepoComments(app.repo).fetch()
-    const dataGenerator = app.processResponse(
-        repoComments,
-        ({ id, user, created_at }, i) => [i, id, user.login, created_at],
-        ({ created_at }) => created_at <= limitDate
-    )
-    let i = 0
-    for await (const result of dataGenerator) {
-        console.info(++i, 'Response data')
-        console.log(result)
-    }
-}
-
-fetchRepoComments()
+app.fetchComments(console.log)
