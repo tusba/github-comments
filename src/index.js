@@ -37,29 +37,13 @@ console.log()
 // make request to repo comments
 async function fetchRepoComments() {
     const repoComments = new RepoComments(app.repo).fetch()
-
-    do {
-        const { value: result, done } = repoComments.next()
-
-        if (done) {
-            break
-        }
-
-        try {
-            const response = await result
-
-            if (!response.data.length) {
-                // if data array is empty then done
-                break
-            }
-
-            const data = response.data.map(({id, user, created_at}, i) => [i, id, user.login, created_at])
-            console.info('Response data', data.length)
-        } catch (err) {
-            console.error('Request failed', err.message)
-            break
-        }
-    } while (true)
+    // todo check created_at against limitDate
+    const dataGenerator = app.processResponse(repoComments, ({id, user, created_at}, i) => [i, id, user.login, created_at])
+    let i = 0
+    for await (const result of dataGenerator) {
+        console.info(++i, 'Response data')
+        console.log(result)
+    }
 }
 
 fetchRepoComments()
