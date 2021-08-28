@@ -1,3 +1,4 @@
+const chalk = require('chalk')
 const { Comment: CommentModel } = require('../models')
 const CommentRequests = require('../request')
 
@@ -40,7 +41,6 @@ module.exports = class App {
 
     /**
      * @param {String} value 
-     * @returns this
      * @throws
      */
     set period(value) {
@@ -53,8 +53,6 @@ module.exports = class App {
         if (!this.periodDays) {
             throw new Error('Wrong value of period')
         }
-
-        return this
     }
 
     /**
@@ -79,7 +77,7 @@ module.exports = class App {
                 yield responseData.map(convert)
             }
         } catch (err) {
-            console.error('Request processing failed', err.message)
+            console.error(chalk.red('Request processing failed:'), err.message)
             throw err
         }
     }
@@ -112,12 +110,16 @@ module.exports = class App {
         ]
 
         for (const request of requests) {
-            const response = new request.class(this.repo).fetch()
-            const results = this.processResponse(response, request.convert, request.filter)
+            try {
+                const response = new request.class(this.repo).fetch()
+                const results = this.processResponse(response, request.convert, request.filter)
 
-            for await (const dataItems of results) {
-                // dataItems is an array of objects returned by request.convert callback
-                treat(dataItems)
+                for await (const dataItems of results) {
+                    // dataItems is an array of objects returned by request.convert callback
+                    treat(dataItems)
+                }
+            } catch (err) {
+                console.error(chalk.red('Response fetching failed:'), err.message)
             }
         }
     }
