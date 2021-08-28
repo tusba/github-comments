@@ -23,23 +23,34 @@ try {
 // inform about user input before starting
 {
     const strPeriod = app.periodDays ? ` for past ${app.periodDays} days` : ''
-    console.log(chalk.white(`\n  Fetching comments${strPeriod} for "${app.repo}"...`))
+    console.log('\n  ' + chalk.white(`Fetching comments${strPeriod} for "${app.repo}"...`))
 }
 
-console.log() // just an empty line
-// make request to fetch comments and group them by author
+console.log('\n  ' + chalk.bgWhite(chalk.black('< todo progress indicator here >')) + '\n')
+
 async function run() {
     const userData = new UserStorage()
 
+    // make request to fetch comments and group them by author
     await app.fetchComments(/** @param {Comment[]} comments */ comments => {
         for (const comment of comments) {
-            console.log(comment)
             userData.addComment(comment.author.id, comment.author.login)
         }
     })
 
-    userData.orderedList.forEach(/** @param {UserDataModel[]} info */ info => {
-        console.log(`comments: ${info.commentCount}, user: #${info.id} ${info.login}, commits: ${info.commitCount}`)
+    /**
+     * @type UserDataModel[]
+     */
+    const results = userData.orderedList
+    if (!results.length) {
+        return
+    }
+
+    // output sorted and formatted results
+    const maxCommentCountLength = String(results[0].commentCount).length
+    results.forEach(/** @param {UserDataModel[]} info */ info => {
+        const strCommentCount = String(info.commentCount).padStart(maxCommentCountLength)
+        console.log(chalk.white(`${strCommentCount} comments, ${info.login} (${info.commitCount} commits)`))
     })
 }
 
