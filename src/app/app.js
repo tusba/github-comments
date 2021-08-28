@@ -59,18 +59,19 @@ module.exports = class App {
      *
      * @param {Generator} request - Generator with request result
      * @param {(Object) => Comment} convert - Callback to convert response data to comment model
+     * @param {(Object) => Boolean} filter - Optional callback to filter response data before converting
      * @yields Comment
      * @throws
      */
-    async *processResponse(request, convert) {
+    async *processResponse(request, convert, filter) {
         try {
             for await (const response of request) {
-                const responseData = response.data
-
-                if (!responseData.length) {
+                if (!response.data.length) {
                     // if data array is empty then it's done
                     return
                 }
+
+                const responseData = typeof filter === 'function' ? response.data.filter(filter) : response.data
 
                 yield responseData.map(convert)
             }

@@ -37,8 +37,11 @@ console.log()
 // make request to repo comments
 async function fetchRepoComments() {
     const repoComments = new RepoComments(app.repo).fetch()
-    // todo check created_at against limitDate
-    const dataGenerator = app.processResponse(repoComments, ({id, user, created_at}, i) => [i, id, user.login, created_at])
+    const dataGenerator = app.processResponse(
+        repoComments,
+        ({ id, user, created_at }, i) => [i, id, user.login, created_at],
+        ({ created_at }) => created_at <= limitDate
+    )
     let i = 0
     for await (const result of dataGenerator) {
         console.info(++i, 'Response data')
