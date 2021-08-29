@@ -90,32 +90,49 @@ module.exports = class App {
     async fetchComments(treat) {
         // date to limit comments from results
         const limitDate = this.limitDate?.toISOString().replace(/\.\d{3}(?=Z$)/i, '')
+
+        /**
+         * Callback to convert response data to comment model
+         *
+         * @param {Object} responseData
+         * @returns Comment
+         */
+        const cbConvert = ({ id, user, created_at }) => {
+            const comment = new CommentModel()
+
+            comment.id = id
+            comment.createdAt = created_at
+            comment.author.id = user.id
+            comment.author.login = user.login
+
+            return comment
+        }
+
+        /**
+         * Optional callback to filter response data before converting
+         *
+         * @param {Object} responseData
+         * @returns Boolean
+         */
+        const cbFilter = limitDate ? ({ created_at }) => created_at >= limitDate : undefined
+
         // description for requests
         const requests = [
             // repo comments
-            {
-                class: CommentRequests.Repo,
-                convert: ({ id, user, created_at }) => {
-                    const comment = new CommentModel()
-
-                    comment.id = id
-                    comment.createdAt = created_at
-                    comment.author.id = user.id
-                    comment.author.login = user.login
-
-                    return comment
-                },
-                filter: limitDate ? ({ created_at }) => created_at >= limitDate : undefined
-            }
+            { class: CommentRequests.Repo }
         ]
 
         for (const request of requests) {
             try {
                 const response = new request.class(this.repo).fetch()
-                const results = this.processResponse(response, request.convert, request.filter)
+                const results = this.processResponse(
+                    response,
+                    request.convert || cbConvert,
+                    request.filter === false ? undefined : (request.filter || cbFilter)
+                )
 
                 for await (const dataItems of results) {
-                    // dataItems is an array of objects returned by request.convert callback
+                    // dataItems is an array of objects returned by request.convert or cbConvert callback
                     treat(dataItems)
                 }
             } catch (err) {
