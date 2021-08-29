@@ -1,3 +1,4 @@
 module.exports = {
-    Repo: require('./repo')
+    Repo: require('./repo'),
+    Issue: require('./issue')
 }
