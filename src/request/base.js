@@ -69,13 +69,19 @@ module.exports = class CommentRequest {
     }
 
     /**
+     * Fetch data over HTTP
+     *
+     * @param {Object} queryParams - additional request parameters
      * @yields Promise
      * @throws
      */
-    *fetch() {
+    *fetch(queryParams = {}) {
         if (this.url === undefined) {
             throw new Error('URL not set')
         }
+
+        // apply parameters from outside
+        Object.assign(this.queryParams, queryParams)
 
         yield this.client.get(this.url, {
             params: this.queryParams

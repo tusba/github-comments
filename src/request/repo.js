@@ -22,7 +22,7 @@ module.exports = class RepoComments extends require('./base') {
     /**
      * @inheritdoc
      */
-    *fetch() {
+    *fetch(queryParams = {}) {
         this.queryParams.per_page = 100
         let page = 0
 
@@ -30,7 +30,7 @@ module.exports = class RepoComments extends require('./base') {
             AppEvents.Emitter.emit(AppEvents.Enum.beforeRequest, `Fetching repo comments: page ${page}`)
 
             this.queryParams.page = page
-            yield* super.fetch()
+            yield* super.fetch(queryParams)
         }
     }
 }

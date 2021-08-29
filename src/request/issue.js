@@ -22,7 +22,7 @@ module.exports = class IssueComments extends require('./base') {
     /**
      * @inheritdoc
      */
-    *fetch() {
+    *fetch(queryParams = {}) {
         this.queryParams.sort = 'created'
         this.queryParams.direction = 'desc'
 
@@ -33,7 +33,7 @@ module.exports = class IssueComments extends require('./base') {
             AppEvents.Emitter.emit(AppEvents.Enum.beforeRequest, `Fetching issue comments: page ${page}`)
 
             this.queryParams.page = page
-            yield* super.fetch()
+            yield* super.fetch(queryParams)
         }
     }
 }
