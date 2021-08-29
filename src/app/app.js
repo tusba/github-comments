@@ -119,12 +119,18 @@ module.exports = class App {
         // description for requests
         const requests = [
             // repo comments
-            { class: CommentRequests.Repo }
+            { class: CommentRequests.Repo },
+            // issue comments
+            {
+                class: CommentRequests.Issue,
+                filter: false,
+                queryParams: limitDate ? { since: limitDate } : undefined
+            }
         ]
 
         for (const request of requests) {
             try {
-                const response = new request.class(this.repo).fetch()
+                const response = new request.class(this.repo).fetch(request.queryParams)
                 const results = this.processResponse(
                     response,
                     request.convert || cbConvert,
