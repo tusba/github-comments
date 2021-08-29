@@ -1,6 +1,7 @@
 const chalk = require('chalk')
 const { program } = require('commander')
 const App = require('./app')
+const { App: AppEvents } = require('./events')
 const { Users: UserStorage } = require('./storage')
 
 // parse command line options
@@ -32,11 +33,15 @@ async function initProgressIndicator() {
         prefixText: '\n '
     })
 
+    AppEvents.Emitter.on(AppEvents.Enum.beforeRequest, description => {
+        ora.text = description
+    })
+
     return ora
 }
 
 async function run() {
-    const progressIndicator = (await initProgressIndicator()).start()
+    const progressIndicator = (await initProgressIndicator()).start('\n')
 
     const userData = new UserStorage()
 
@@ -47,13 +52,14 @@ async function run() {
         }
     })
 
-    progressIndicator.succeed('Done')
+    progressIndicator.succeed('Done\n')
 
     /**
      * @type UserDataModel[]
      */
     const results = userData.orderedList
     if (!results.length) {
+        console.log(chalk.white('No data available'))
         return
     }
 
