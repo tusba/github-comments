@@ -26,9 +26,18 @@ try {
     console.log('\n  ' + chalk.white(`Fetching comments${strPeriod} for "${app.repo}"...`))
 }
 
-console.log('\n  ' + chalk.bgWhite(chalk.black('< todo progress indicator here >')) + '\n')
+async function initProgressIndicator() {
+    const ora = (await import('ora')).default({
+        spinner: 'bouncingBar', // on windows always 'line'
+        prefixText: '\n '
+    })
+
+    return ora
+}
 
 async function run() {
+    const progressIndicator = (await initProgressIndicator()).start()
+
     const userData = new UserStorage()
 
     // make request to fetch comments and group them by author
@@ -37,6 +46,8 @@ async function run() {
             userData.addComment(comment.author.id, comment.author.login)
         }
     })
+
+    progressIndicator.succeed('Done')
 
     /**
      * @type UserDataModel[]
