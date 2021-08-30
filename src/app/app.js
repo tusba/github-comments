@@ -102,8 +102,8 @@ module.exports = class App {
 
             comment.id = id
             comment.createdAt = created_at
-            comment.author.id = user.id
-            comment.author.login = user.login
+            comment.author.id = user?.id || null
+            comment.author.login = user?.login || null
 
             return comment
         }
@@ -116,16 +116,22 @@ module.exports = class App {
          */
         const cbFilter = limitDate ? ({ created_at }) => created_at >= limitDate : undefined
 
+        /**
+         * Options to filter via query params
+         */
+        const queryFilter = {
+            filter: false,
+            queryParams: limitDate ? { since: limitDate } : undefined
+        }
+
         // description for requests
         const requests = [
             // repo comments
             { class: CommentRequests.Repo },
             // issue comments
-            {
-                class: CommentRequests.Issue,
-                filter: false,
-                queryParams: limitDate ? { since: limitDate } : undefined
-            }
+            { class: CommentRequests.Issue, ...queryFilter },
+            // pull comments
+            { class: CommentRequests.Pull, ...queryFilter }
         ]
 
         for (const request of requests) {

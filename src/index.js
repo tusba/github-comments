@@ -67,7 +67,9 @@ async function run() {
     const maxCommentCountLength = String(results[0].commentCount).length
     results.forEach(/** @param {UserDataModel[]} info */ info => {
         const strCommentCount = String(info.commentCount).padStart(maxCommentCountLength)
-        console.log(chalk.white(`${strCommentCount} comments, ${info.login} (${info.commitCount} commits)`))
+        const strLogin = info.login || 'N/A'
+        const strCommitCount = info.login ? ` (${info.commitCount} commits)` : ''
+        console.log(chalk.white(`${strCommentCount} comments, ${strLogin}${strCommitCount}`))
     })
 }
 

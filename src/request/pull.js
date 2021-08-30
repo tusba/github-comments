@@ -30,7 +30,7 @@ module.exports = class PullComments extends require('./base') {
         let page = 0
 
         while (++page > 0) {
-            AppEvents.Emitter.emit(AppEvents.Enum.beforeRequest, `Fetching pulls comments: page ${page}`)
+            AppEvents.Emitter.emit(AppEvents.Enum.beforeRequest, `Fetching pull comments: page ${page}`)
 
             this.queryParams.page = page
             yield* super.fetch(queryParams)
