@@ -1,6 +1,6 @@
 const chalk = require('chalk')
 const { Comment: CommentModel } = require('../models')
-const CommentRequests = require('../request')
+const Requests = require('../request')
 
 /**
  * @class App
@@ -85,7 +85,7 @@ module.exports = class App {
     /**
      * Fetch comment data from many sources
      *
-     * @param {(Array) => {}} treat - Callback to process an array of obtained comments
+     * @param {(Array) => void} treat - Callback to process an array of obtained comments
      */
     async fetchComments(treat) {
         // date to limit comments from results
@@ -127,11 +127,11 @@ module.exports = class App {
         // description for requests
         const requests = [
             // repo comments
-            { class: CommentRequests.Repo },
+            { class: Requests.Repo },
             // issue comments
-            { class: CommentRequests.Issue, ...queryFilter },
+            { class: Requests.Issue, ...queryFilter },
             // pull comments
-            { class: CommentRequests.Pull, ...queryFilter }
+            { class: Requests.Pull, ...queryFilter }
         ]
 
         for (const request of requests) {
@@ -148,7 +148,7 @@ module.exports = class App {
                     treat(dataItems)
                 }
             } catch (err) {
-                console.error(chalk.red('Response fetching failed:'), err.message)
+                console.error(chalk.red('Comment fetching failed:'), err.message)
             }
         }
     }

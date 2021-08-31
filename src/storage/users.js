@@ -48,4 +48,13 @@ module.exports = class UserData {
             return a.login < b.login ? -1 : 1
         })
     }
+
+    /**
+     * Get number of user data items
+     *
+     * @returns Number
+     */
+    get size() {
+        return this.map.size
+    }
 }

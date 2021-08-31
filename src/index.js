@@ -40,9 +40,12 @@ async function initProgressIndicator() {
     return ora
 }
 
+/**
+ * Fetch and process results
+ *
+ * @returns UserDataModel[]
+ */
 async function run() {
-    const progressIndicator = (await initProgressIndicator()).start('\n')
-
     const userData = new UserStorage()
 
     // make request to fetch comments and group them by author
@@ -52,12 +55,20 @@ async function run() {
         }
     })
 
+    if (!userData.size) {
+        return []
+    }
+
+    // todo fetch contributions
+
+    return userData.orderedList
+}
+
+async function main() {
+    const progressIndicator = (await initProgressIndicator()).start('\n')
+    const results = await run()
     progressIndicator.succeed('Done\n')
 
-    /**
-     * @type UserDataModel[]
-     */
-    const results = userData.orderedList
     if (!results.length) {
         console.log(chalk.white('No data available'))
         return
@@ -65,6 +76,7 @@ async function run() {
 
     // output sorted and formatted results
     const maxCommentCountLength = String(results[0].commentCount).length
+
     results.forEach(/** @param {UserDataModel[]} info */ info => {
         const strCommentCount = String(info.commentCount).padStart(maxCommentCountLength)
         const strLogin = info.login || 'N/A'
@@ -73,4 +85,4 @@ async function run() {
     })
 }
 
-run()
+main()
