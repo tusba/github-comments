@@ -59,7 +59,10 @@ async function run() {
         return []
     }
 
-    // todo fetch contributions
+    // make request to fetch contribution activity and add it to authors
+    app.fetchContributions(/** @param {Contribution} */ contribution => {
+        // todo add contribution to userData
+    })
 
     return userData.orderedList
 }

@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const { Comment: CommentModel } = require('../models')
+const { Comment: CommentModel, Contribution: ContributionModel } = require('../models')
 const Requests = require('../request')
 
 /**
@@ -150,6 +150,33 @@ module.exports = class App {
             } catch (err) {
                 console.error(chalk.red('Comment fetching failed:'), err.message)
             }
+        }
+    }
+
+    /**
+     * Fetch contribution activity data
+     *
+     * @param {(ContributionModel) => void} treat - Callback to process an obtained contribution
+     */
+     async fetchContributions(treat) {
+        try {
+            const response = await new Requests.Contribution(this.repo).fetch()
+
+            for await (const result of response) {
+                const contributions = result.data.map(({ total, author }) => {
+                    const contribution = new ContributionModel()
+
+                    contribution.commitCount = total
+                    contribution.author.id = author?.id || null
+                    contribution.author.login = author?.login || null
+
+                    return contribution
+                })
+
+                contributions.forEach(treat)
+            }
+        } catch (err) {
+            console.error(chalk.red('Contribution fetching response failed:'), err.message)
         }
     }
 }
