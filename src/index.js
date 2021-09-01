@@ -41,6 +41,11 @@ AppEvents.Emitter.on(AppEvents.Enum.rateLimit, ({ limit, remaining, used }) => {
     rate.limit = limit
     rate.remaining = remaining
     rate.used = used
+
+    if (!remaining) {
+        console.error(chalk.red('Rate limit is exceeded'))
+        process.exit(2)
+    }
 })
 
 async function initProgressIndicator() {
