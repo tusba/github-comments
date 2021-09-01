@@ -22,7 +22,7 @@ module.exports = class RepoComments extends require('./base') {
     /**
      * @inheritdoc
      */
-    *fetch(queryParams = {}) {
+    async *fetch(queryParams = {}) {
         this.queryParams.per_page = 100
         let page = 0
 

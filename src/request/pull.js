@@ -22,7 +22,7 @@ module.exports = class PullComments extends require('./base') {
     /**
      * @inheritdoc
      */
-    *fetch(queryParams = {}) {
+    async *fetch(queryParams = {}) {
         this.queryParams.sort = 'created_at'
         this.queryParams.direction = 'desc'
 

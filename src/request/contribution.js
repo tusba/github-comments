@@ -22,7 +22,7 @@ module.exports = class Contribution extends require('./base') {
     /**
      * @inheritdoc
      */
-    *fetch(queryParams = {}) {
+    async *fetch(queryParams = {}) {
         AppEvents.Emitter.emit(AppEvents.Enum.beforeRequest, 'Fetching contribution activity')
         yield* super.fetch(queryParams)
     }

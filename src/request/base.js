@@ -1,10 +1,11 @@
 const axios = require('axios')
+const config = require('../config')
 
 /**
- * @class CommentRequest
- * @classdesc Base request for comments
+ * @class RepoRequest
+ * @classdesc Base request to fetch data from repo
  */
-module.exports = class CommentRequest {
+module.exports = class RepoRequest {
     /**
      * @param {String} repo - Repository ID
      */
@@ -27,7 +28,7 @@ module.exports = class CommentRequest {
          * @type Object
          */
         this.headers = {
-            'accept': 'application/vnd.github.v3+json'
+            accept: 'application/vnd.github.v3+json'
         }
         /**
          * Request parameters
@@ -35,6 +36,9 @@ module.exports = class CommentRequest {
          * @type Object
          */
         this.queryParams = {}
+
+        const authToken = config?.GITHUB_PERSONAL_ACCESS_TOKEN
+        authToken && (this.headers.Authorization = `token ${config.GITHUB_PERSONAL_ACCESS_TOKEN}`)
 
         this.initClient()
     }
@@ -62,7 +66,7 @@ module.exports = class CommentRequest {
         this.client = axios.create({
            baseURL: this.baseUrl,
            headers: this.headers,
-           timeout: 2000
+           timeout: 7000
         })
 
         return this
@@ -75,7 +79,7 @@ module.exports = class CommentRequest {
      * @yields Promise
      * @throws
      */
-    *fetch(queryParams = {}) {
+    async *fetch(queryParams = {}) {
         if (this.url === undefined) {
             throw new Error('URL not set')
         }

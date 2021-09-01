@@ -22,7 +22,7 @@ module.exports = class IssueComments extends require('./base') {
     /**
      * @inheritdoc
      */
-    *fetch(queryParams = {}) {
+    async *fetch(queryParams = {}) {
         this.queryParams.sort = 'created'
         this.queryParams.direction = 'desc'
 
