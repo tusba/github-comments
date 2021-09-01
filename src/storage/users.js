@@ -33,6 +33,21 @@ module.exports = class UserData {
     }
 
     /**
+     * Add contribution activity to user
+     *
+     * @param {Number} userId - User ID to add contribution activity to
+     * @param {Number} commitCount - Total commit count
+     * @returns this
+     */
+    addContribution(userId, commitCount) {
+        if (this.map.has(userId)) {
+            this.map.get(userId).commitCount += commitCount
+        }
+
+        return this
+    }
+
+    /**
      * Get user data as sorted list:
      * a) by number of comments - descending
      * b) by user login name - ascending

@@ -50,8 +50,8 @@ async function run() {
 
     // make request to fetch comments and group them by author
     await app.fetchComments(/** @param {Comment[]} comments */ comments => {
-        for (const comment of comments) {
-            userData.addComment(comment.author.id, comment.author.login)
+        for (const { author: { id, login } } of comments) {
+            userData.addComment(id, login)
         }
     })
 
@@ -60,8 +60,8 @@ async function run() {
     }
 
     // make request to fetch contribution activity and add it to authors
-    app.fetchContributions(/** @param {Contribution} */ contribution => {
-        // todo add contribution to userData
+    await app.fetchContributions(/** @param {Contribution} */ ({ author: { id }, commitCount }) => {
+        userData.addContribution(id, commitCount)
     })
 
     return userData.orderedList
