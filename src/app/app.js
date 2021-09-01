@@ -136,7 +136,7 @@ module.exports = class App {
 
         for (const request of requests) {
             try {
-                const response = new request.class(this.repo).fetch(request.queryParams)
+                const response = await new request.class(this.repo).fetch(request.queryParams)
                 const results = this.processResponse(
                     response,
                     request.convert || cbConvert,

@@ -2,6 +2,7 @@ const chalk = require('chalk')
 const { program } = require('commander')
 const App = require('./app')
 const { App: AppEvents } = require('./events')
+const { fetchRateLimit } = require('./request')
 const { Users: UserStorage } = require('./storage')
 
 // parse command line options
@@ -27,6 +28,21 @@ try {
     console.log('\n  ' + chalk.white(`Fetching comments${strPeriod} for "${app.repo}"...`))
 }
 
+const rate = {
+    initialized: false,
+    limit: undefined,
+    remaining: undefined,
+    used: undefined
+}
+
+AppEvents.Emitter.on(AppEvents.Enum.rateLimit, ({ limit, remaining, used }) => {
+    rate.initialized = true
+
+    rate.limit = limit
+    rate.remaining = remaining
+    rate.used = used
+})
+
 async function initProgressIndicator() {
     const ora = (await import('ora')).default({
         spinner: 'bouncingBar', // on windows always 'line'
@@ -34,7 +50,9 @@ async function initProgressIndicator() {
     })
 
     AppEvents.Emitter.on(AppEvents.Enum.beforeRequest, description => {
-        ora.text = description
+        const { used, limit } = rate
+        const strRate = rate.initialized ? ` [${used} request(s) of ${limit} used]` : ''
+        ora.text = `${description}${strRate}`
     })
 
     return ora
@@ -69,6 +87,7 @@ async function run() {
 
 async function main() {
     const progressIndicator = (await initProgressIndicator()).start('\n')
+    await fetchRateLimit() // initialize shared HTTP client
     const results = await run()
     progressIndicator.succeed('Done\n')
 
