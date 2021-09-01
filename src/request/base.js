@@ -1,4 +1,5 @@
 const axios = require('axios')
+const { App: AppEvents } = require('../events')
 const config = require('../config')
 
 /**
@@ -6,6 +7,13 @@ const config = require('../config')
  * @classdesc Base request to fetch data from repo
  */
 module.exports = class RepoRequest {
+    /**
+     * Shared HTTP client to fetch rate limit
+     *
+     * @type RepoRequest
+     */
+    static rateLimitClient = null
+
     /**
      * @param {String} repo - Repository ID
      */
@@ -84,11 +92,25 @@ module.exports = class RepoRequest {
             throw new Error('URL not set')
         }
 
+        await RepoRequest.fetchRateLimit()
+
         // apply parameters from outside
         Object.assign(this.queryParams, queryParams)
 
         yield this.client.get(this.url, {
             params: this.queryParams
         })
+    }
+
+    /**
+     * Fetch rate limit data
+     */
+    static async fetchRateLimit() {
+        if (!constructor.rateLimitClient) {
+            constructor.rateLimitClient = new RepoRequest(undefined)
+        }
+
+        const { data: rateLimit } = await constructor.rateLimitClient.client.get('/rate_limit')
+        AppEvents.Emitter.emit(AppEvents.Enum.rateLimit, rateLimit.rate)
     }
 }
