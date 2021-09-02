@@ -5,25 +5,28 @@ const { App: AppEvents } = require('../events')
  * @classdesc Request for contribution activity
  */
 module.exports = class Contribution extends require('./base') {
-    /**
-     * @inheritdoc
-     */
-    constructor(repo) {
-        super(repo)
-    }
+  /**
+   * @inheritdoc
+   */
+  constructor(repo) {
+    super(repo)
+  }
 
-    /**
-     * @inheritdoc
-     */
-    get url() {
-        return `/repos/${this.repo}/stats/contributors`
-    }
+  /**
+   * @inheritdoc
+   */
+  get url() {
+    return `/repos/${this.repo}/stats/contributors`
+  }
 
-    /**
-     * @inheritdoc
-     */
-    async *fetch(queryParams = {}) {
-        AppEvents.Emitter.emit(AppEvents.Enum.beforeRequest, 'Fetching contribution activity')
-        yield* super.fetch(queryParams)
-    }
+  /**
+   * @inheritdoc
+   */
+  async *fetch(queryParams = {}) {
+    AppEvents.Emitter.emit(
+      AppEvents.Enum.beforeRequest,
+      'Fetching contribution activity',
+    )
+    yield* super.fetch(queryParams)
+  }
 }
