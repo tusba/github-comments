@@ -1,7 +1,7 @@
 {
   "parserOptions": {
-    sourceType: "module",
-    ecmaVersion: 2017,
+    "sourceType": "module",
+    "ecmaVersion": 2017
   },
   "plugins": [
     "prettier"
@@ -113,6 +113,6 @@
     "handle-callback-err": [2, "^(err|error)$"],
     "no-mixed-requires": 2,
     "no-new-require": 2,
-    "no-path-concat": 2,
+    "no-path-concat": 2
   }
 }

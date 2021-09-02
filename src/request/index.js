@@ -1,7 +1,7 @@
 module.exports = {
-    Repo: require('./repo'),
-    Issue: require('./issue'),
-    Pull: require('./pull'),
-    Contribution: require('./contribution'),
-    fetchRateLimit: require('./base').fetchRateLimit
+  Repo: require('./repo'),
+  Issue: require('./issue'),
+  Pull: require('./pull'),
+  Contribution: require('./contribution'),
+  fetchRateLimit: require('./base').fetchRateLimit,
 }
